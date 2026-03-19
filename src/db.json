@@ -1,0 +1,54 @@
+{
+  "pizzas": [
+    {
+      "id": 0,
+      "imageUrl": "/img/pizza.png",
+      "name": "Пеперони Фреш с перцем",
+      "types": [0, 1],
+      "sizes": [26, 30, 40],
+      "price": 803,
+      "category": 0,
+      "rating": 4
+    },
+    {
+      "id": 1,
+      "imageUrl": "/img/pizza.png",
+      "name": "Маргаритта",
+      "types": [0, 1],
+      "sizes": [26, 40],
+      "price": 500,
+      "category": 0,
+      "rating": 3
+    },
+    {
+      "id": 2,
+      "imageUrl": "/img/pizza.png",
+      "name": "Цыпленок Барбекю",
+      "types": [0, 1],
+      "sizes": [26, 30, 40],
+      "price": 689,
+      "category": 0,
+      "rating": 5
+    },
+    {
+      "id": 3,
+      "imageUrl": "/img/pizza.png",
+      "name": "С курицей и анасом",
+      "types": [0, 1],
+      "sizes": [30, 40],
+      "price": 1200,
+      "category": 0,
+      "rating": 100000000
+    },
+    {
+      "id": 4,
+      "imageUrl": "/img/pizza.png",
+      "name": "Чизбургер",
+      "types": [0, 1],
+      "sizes": [26, 30, 40],
+      "price": 765,
+      "category": 0,
+      "rating": 5
+    }
+  ]
+}

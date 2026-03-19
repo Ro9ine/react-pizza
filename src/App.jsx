@@ -7,6 +7,10 @@ import Category from './components/Category/Category';
 import Header from './components/Header/Header';
 import Sort from './components/Sort/Sort';
 
+import db from './db.json';
+
+const pizzas = db.pizzas;
+
 function App() {
   return (
     <div className="App">
@@ -20,7 +24,16 @@ function App() {
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
-              <Card title={'Чизбургер-пицца'} price={395} />
+              {pizzas.map((obj) => (
+                <Card
+                  key={obj.id}
+                  title={obj.name}
+                  price={obj.price}
+                  image={obj.imageUrl}
+                  sizes={obj.sizes}
+                  types={obj.types}
+                />
+              ))}
             </div>
           </div>
         </div>
