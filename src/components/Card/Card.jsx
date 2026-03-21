@@ -6,7 +6,6 @@ function Card({ title, price, image, sizes, types }) {
 
   const typeNames = ['тонокое', 'традиционное'];
 
-  console.log(sizes);
   return (
     <div className="pizza-block">
       <img className="pizza-block__image" src={image} alt="Pizza" />
@@ -14,7 +13,10 @@ function Card({ title, price, image, sizes, types }) {
       <div className="pizza-block__selector">
         <ul>
           {types.map((type, index) => (
-            <li onClick={() => setActiveType(type)} className={activeType === type ? 'active' : ''}>
+            <li
+              key={index}
+              onClick={() => setActiveType(type)}
+              className={activeType === type ? 'active' : ''}>
               {typeNames[type]}
             </li>
           ))}
@@ -22,6 +24,7 @@ function Card({ title, price, image, sizes, types }) {
         <ul>
           {sizes.map((size, index) => (
             <li
+              key={index}
               onClick={() => setActiveSize(index)}
               className={activeSize === index ? 'active' : ''}>
               {size} см.
