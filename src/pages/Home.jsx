@@ -18,10 +18,11 @@ const Home = () => {
         setItems(json);
         setIsLoading(false);
       });
+    window.scrollTo(0, 0);
   }, []);
 
   return (
-    <div>
+    <div className="container">
       <div className="content__top">
         <Category />
         <Sort />
