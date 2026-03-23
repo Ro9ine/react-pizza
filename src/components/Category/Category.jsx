@@ -1,13 +1,5 @@
-import React from 'react';
-
-function Category() {
-  const [activeCategory, setActiveCategory] = React.useState(0);
-
+function Category({ value, onChangeCategory }) {
   const categories = ['Все', 'Мясные', 'Вегетерианские', 'Гриль', 'Острые', 'Закрытые'];
-
-  const onClickCategory = (index) => {
-    setActiveCategory(index);
-  };
 
   return (
     <div className="categories">
@@ -16,8 +8,8 @@ function Category() {
           return (
             <li
               key={index}
-              onClick={() => onClickCategory(index)}
-              className={activeCategory === index ? 'active' : ''}>
+              onClick={() => onChangeCategory(index)}
+              className={value === index ? 'active' : ''}>
               {category}
             </li>
           );
