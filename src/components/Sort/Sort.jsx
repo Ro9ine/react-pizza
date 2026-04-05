@@ -1,16 +1,42 @@
 import React from 'react';
 
-function Sort({ value, onChangeType }) {
+import { useSelector, useDispatch } from 'react-redux';
+import { setSort } from '../../redux/slices/filterSlice';
+
+export const list = [
+  { name: 'популярности', sortProperty: 'rating' },
+  { name: 'цене', sortProperty: 'price' },
+  { name: 'алфавиту', sortProperty: 'name' },
+];
+
+function Sort() {
   const [isVisible, setIsVisible] = React.useState(false);
 
-  const list = [
-    { name: 'популярности', sortProperty: 'rating' },
-    { name: 'цене', sortProperty: 'price' },
-    { name: 'алфавиту', sortProperty: 'name' },
-  ];
+  const sortRef = React.useRef();
+
+  const dispatch = useDispatch();
+  const sort = useSelector((state) => state.filter.sort);
+  console.log(sort);
+
+  const onChangeType = (obj) => {
+    dispatch(setSort(obj));
+  };
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sortRef.current && event.target && !sortRef.current.contains(event.target)) {
+        setIsVisible(false);
+      }
+    };
+    document.body.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.body.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
@@ -24,7 +50,7 @@ function Sort({ value, onChangeType }) {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setIsVisible(!isVisible)}>{value.name}</span>
+        <span onClick={() => setIsVisible(!isVisible)}>{sort.name}</span>
       </div>
       {isVisible && (
         <div className="sort__popup">
@@ -33,7 +59,7 @@ function Sort({ value, onChangeType }) {
               <li
                 onClick={() => onChangeType(obj)}
                 key={index}
-                className={value === index ? 'active' : ''}>
+                className={sort === index ? 'active' : ''}>
                 по {obj.name}
               </li>
             ))}
