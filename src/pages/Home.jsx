@@ -1,6 +1,5 @@
 import React from 'react';
 import qs from 'qs';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { SearchContext } from '../App';
@@ -15,12 +14,14 @@ import Category from '../components/Category/Category';
 import Sort from '../components/Sort/Sort';
 import CardSkeleton from '../components/Card/CardSkeletonBlock';
 import Pagination from '../components/Pagination';
+import { fetchPizzas } from '../redux/slices/pizzasSlice';
 
 const Home = () => {
   const categoryId = useSelector((state) => state.filter.categoryId);
-  // Исправлено: получаем весь объект sort, а не только sortProperty
   const sort = useSelector((state) => state.filter.sort);
   const currentPage = useSelector((state) => state.filter.currentPage);
+  const items = useSelector((state) => state.pizzas.items);
+  const isLoading = useSelector((state) => state.pizzas.status);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -28,9 +29,6 @@ const Home = () => {
   const isMounted = React.useRef(false);
 
   const { searchValue } = React.useContext(SearchContext);
-
-  const [items, setItems] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
 
   const onChangeCategory = (id) => {
     dispatch(setCategoryId(id));
@@ -58,30 +56,28 @@ const Home = () => {
     }
   }, []);
 
-  const fetchPizzas = () => {
-    setIsLoading(true);
-
+  const fetchPizza = async () => {
     const sortProperty = sort?.sortProperty || 'rating';
 
-    axios
-      .get(
-        `https://69bd240a2bc2a25b22ad7544.mockapi.io/items?page=${currentPage}&limit=4&${categoryId ? `category=${categoryId}` : ''}&sortBy=${sortProperty}&order=desc`,
-      )
-      .then((res) => {
-        setItems(res.data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching data:', err);
-        setIsLoading(false);
-      });
+    dispatch(
+      fetchPizzas({
+        currentPage,
+        categoryId,
+        sortProperty,
+      }),
+    );
+
+    // const res = await axios.get(`https://69bd240a2bc2a25b22ad7544.mockapi.io/items?page=${currentPage}&limit=4&${categoryId ? `category=${categoryId}` : ''}&sortBy=${sortProperty}&order=desc`);
+
+    // setItems(res.data);
+    // setIsLoading(false);
   };
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
 
     if (!isSearch.current) {
-      fetchPizzas();
+      fetchPizza();
     }
 
     isSearch.current = false;
@@ -126,7 +122,14 @@ const Home = () => {
         <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
-      <div className="content__items">{isLoading ? skeletons : pizzas}</div>
+
+      {isLoading === 'error' ? (
+        <div>
+          <h2>'Произошла какая-то ошибка :(' </h2>
+        </div>
+      ) : (
+        <div className="content__items">{isLoading === 'loading' ? skeletons : pizzas}</div>
+      )}
       <Pagination currentPage={currentPage} onChangePage={onChangePage} />
     </div>
   );
