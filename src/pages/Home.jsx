@@ -5,7 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { SearchContext } from '../App';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
+import {
+  selectFilter,
+  setCategoryId,
+  setCurrentPage,
+  setFilters,
+} from '../redux/slices/filterSlice';
 
 import { list } from '../components/Sort/Sort';
 
@@ -14,21 +19,16 @@ import Category from '../components/Category/Category';
 import Sort from '../components/Sort/Sort';
 import CardSkeleton from '../components/Card/CardSkeletonBlock';
 import Pagination from '../components/Pagination';
-import { fetchPizzas } from '../redux/slices/pizzasSlice';
+import { fetchPizzas, selectPizzas } from '../redux/slices/pizzasSlice';
 
 const Home = () => {
-  const categoryId = useSelector((state) => state.filter.categoryId);
-  const sort = useSelector((state) => state.filter.sort);
-  const currentPage = useSelector((state) => state.filter.currentPage);
-  const items = useSelector((state) => state.pizzas.items);
-  const isLoading = useSelector((state) => state.pizzas.status);
+  const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
+  const { items, isLoading } = useSelector(selectPizzas);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
-
-  const { searchValue } = React.useContext(SearchContext);
 
   const onChangeCategory = (id) => {
     dispatch(setCategoryId(id));

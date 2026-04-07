@@ -2,7 +2,8 @@ import React from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { addItem } from '../../redux/slices/cartSlice';
+import { addItem, selectCart, selectCartItemById } from '../../redux/slices/cartSlice';
+import { selectPizzaById } from '../../redux/slices/pizzasSlice';
 
 function Card({ id, title, price, image, sizes, types }) {
   const [activeSize, setActiveSize] = React.useState(0);
@@ -11,7 +12,7 @@ function Card({ id, title, price, image, sizes, types }) {
   const typeNames = ['тонокое', 'традиционное'];
 
   const dispatch = useDispatch();
-  const cartItem = useSelector((state) => state.cart.items.find((obj) => obj.id === id));
+  const cartItem = useSelector(selectCartItemById);
 
   const addedCount = cartItem ? cartItem.count : 0;
 
