@@ -7,25 +7,24 @@ import { setSearchValue } from '../../redux/slices/filterSlice';
 
 function Search() {
   const dispatch = useDispatch();
-  const [value, setValue] = React.useState('');
-  const inputRef = React.useRef();
+  const [value, setValue] = React.useState<string>('');
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const testDobounce = React.useCallback();
-
-  const onClickClear = () => {
+  const onClickClear = (event: React.MouseEvent<SVGSVGElement>) => {
     dispatch(setSearchValue(''));
-    inputRef.current.focus();
+    setValue('');
+    inputRef.current?.focus();
   };
 
   const updateSearchValue = React.useCallback(
-    debounce((str) => {
+    debounce((str: string) => {
       dispatch(setSearchValue(str));
       console.log(str);
     }, 250),
     [],
   );
 
-  const onChangeInput = (event) => {
+  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
     updateSearchValue(event.target.value);
   };

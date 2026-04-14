@@ -2,9 +2,8 @@ import React from 'react';
 import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
 
-import { SearchContext } from '../App';
-
 import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch } from '../redux/store';
 import {
   selectFilter,
   setCategoryId,
@@ -21,20 +20,20 @@ import CardSkeleton from '../components/Card/CardSkeletonBlock';
 import Pagination from '../components/Pagination';
 import { fetchPizzas, selectPizzas } from '../redux/slices/pizzasSlice';
 
-const Home = () => {
+const Home: React.FC = () => {
   const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
-  const { items, isLoading } = useSelector(selectPizzas);
+  const { items, status } = useSelector(selectPizzas);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
 
-  const onChangeCategory = (id) => {
-    dispatch(setCategoryId(id));
+  const onChangeCategory = (index: number) => {
+    dispatch(setCategoryId(index));
   };
 
-  const onChangePage = (number) => {
+  const onChangePage = (number: number) => {
     dispatch(setCurrentPage(number));
   };
 
@@ -46,6 +45,7 @@ const Home = () => {
 
       dispatch(
         setFilters({
+          searchValue: searchValue,
           categoryId: Number(params.categoryId) || 0,
           currentPage: Number(params.currentPage) || 1,
           sort: foundSort || list[0],
@@ -60,6 +60,7 @@ const Home = () => {
     const sortProperty = sort?.sortProperty || 'rating';
 
     dispatch(
+      // @ts-ignore
       fetchPizzas({
         currentPage,
         categoryId,
@@ -70,7 +71,7 @@ const Home = () => {
     // const res = await axios.get(`https://69bd240a2bc2a25b22ad7544.mockapi.io/items?page=${currentPage}&limit=4&${categoryId ? `category=${categoryId}` : ''}&sortBy=${sortProperty}&order=desc`);
 
     // setItems(res.data);
-    // setIsLoading(false);
+    // setstatus(false);
   };
 
   React.useEffect(() => {
@@ -97,13 +98,13 @@ const Home = () => {
   }, [categoryId, currentPage, sort]);
   const skeletons = [...new Array(8)].map((_, index) => <CardSkeleton key={index} />);
   const pizzas = items
-    .filter((obj) => {
+    .filter((obj: any) => {
       if (obj.name.toLowerCase().includes(searchValue.toLowerCase())) {
         return true;
       }
       return false;
     })
-    .map((obj) => (
+    .map((obj: any) => (
       <Card
         id={obj.id}
         key={obj.id}
@@ -123,12 +124,12 @@ const Home = () => {
       </div>
       <h2 className="content__title">Все пиццы</h2>
 
-      {isLoading === 'error' ? (
+      {status === 'error' ? (
         <div>
           <h2>'Произошла какая-то ошибка :(' </h2>
         </div>
       ) : (
-        <div className="content__items">{isLoading === 'loading' ? skeletons : pizzas}</div>
+        <div className="content__items">{status === 'loading' ? skeletons : pizzas}</div>
       )}
       <Pagination currentPage={currentPage} onChangePage={onChangePage} />
     </div>

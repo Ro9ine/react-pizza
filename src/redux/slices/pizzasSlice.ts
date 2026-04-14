@@ -1,15 +1,44 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { RootState } from '../store';
+import { CartItem } from './cartSlice';
 
-const initialState = {
-  items: [],
-  status: 'loading', // 'loading' | 'success' | 'error'
+enum Status {
+  LOADING = 'loading',
+  SUCCES = 'succes',
+  ERROR = 'error',
+}
+
+type Pizza = {
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+  sizes: number[];
+  types: number[];
+  raiting: number;
 };
 
-export const fetchPizzas = createAsyncThunk(
+type FetchPizzaArgs = {
+  currentPage: number;
+  categoryId: number;
+  sortProperty: string;
+};
+
+interface PizzasSliceState {
+  items: Pizza[];
+  status: Status;
+}
+
+const initialState: PizzasSliceState = {
+  items: [],
+  status: Status.LOADING, // 'loading' | 'success' | 'error'
+};
+
+export const fetchPizzas = createAsyncThunk<Pizza[], FetchPizzaArgs>(
   'pizza/fetchPizzaStatus',
   async ({ currentPage, categoryId, sortProperty }) => {
-    const { data } = await axios.get(
+    const { data } = await axios.get<Pizza[]>(
       `https://69bd240a2bc2a25b22ad7544.mockapi.io/items?page=${currentPage}&limit=4&${categoryId ? `category=${categoryId}` : ''}&sortBy=${sortProperty}&order=desc`,
     );
     return data;
@@ -28,22 +57,21 @@ const pizzaSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchPizzas.pending, (state) => {
-        state.status = 'loading';
+        state.status = Status.LOADING;
         state.items = [];
       })
       .addCase(fetchPizzas.fulfilled, (state, action) => {
         state.items = action.payload;
-        state.status = 'success';
+        state.status = Status.SUCCES;
       })
       .addCase(fetchPizzas.rejected, (state) => {
-        state.status = 'error';
+        state.status = Status.ERROR;
         state.items = [];
       });
   },
 });
 
-export const selectPizzas = (state) => state.pizzas;
-export const selectPizzaById = (id) => (state) => state.cart.items.find((obj) => obj.id === id);
+export const selectPizzas = (state: RootState) => state.pizzas;
 
 export const { setItems } = pizzaSlice.actions;
 export default pizzaSlice.reducer;

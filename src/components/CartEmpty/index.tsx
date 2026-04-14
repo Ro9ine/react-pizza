@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function CartEmpty() {
+const CartEmpty: React.FC = () => {
   return (
     <>
       <div className="cart cart--empty">
         <h2>
-          Корзина пуста <icon>😞</icon>
+          Корзина пуста <span>😞</span>
         </h2>
         <p>
           Вероятней всего, вы не заказывали еще пиццу.
@@ -19,6 +19,6 @@ function CartEmpty() {
       </div>
     </>
   );
-}
+};
 
 export default CartEmpty;

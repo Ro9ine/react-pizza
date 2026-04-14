@@ -2,28 +2,37 @@ import React from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { addItem, selectCart, selectCartItemById } from '../../redux/slices/cartSlice';
-import { selectPizzaById } from '../../redux/slices/pizzasSlice';
+import { addItem, CartItem, selectCart, selectCartItemById } from '../../redux/slices/cartSlice';
 
-function Card({ id, title, price, image, sizes, types }) {
-  const [activeSize, setActiveSize] = React.useState(0);
-  const [activeType, setActiveType] = React.useState(0);
+type CardProps = {
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+  sizes: number[];
+  types: number[];
+};
+
+const Card: React.FC<CardProps> = ({ id, title, price, image, sizes, types }) => {
+  const [activeSize, setActiveSize] = React.useState<number>(0);
+  const [activeType, setActiveType] = React.useState<number>(0);
 
   const typeNames = ['тонокое', 'традиционное'];
 
   const dispatch = useDispatch();
-  const cartItem = useSelector(selectCartItemById);
+  const cartItem = useSelector(selectCartItemById(id));
 
   const addedCount = cartItem ? cartItem.count : 0;
 
   const onClickAdd = () => {
-    const item = {
+    const item: CartItem = {
       id,
       title,
       price,
       image,
       type: typeNames[activeType],
       size: sizes[activeSize],
+      count: 0,
     };
     dispatch(addItem(item));
   };
@@ -76,6 +85,6 @@ function Card({ id, title, price, image, sizes, types }) {
       </div>
     </div>
   );
-}
+};
 
 export default Card;

@@ -3,8 +3,13 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectFilter, setSort } from '../../redux/slices/filterSlice';
 
-export const list = [
-  { name: 'популярности', sortProperty: 'rating' },
+type SortListItem = {
+  name: string;
+  sortProperty: 'raiting' | 'name' | 'price';
+};
+
+export const list: SortListItem[] = [
+  { name: 'популярности', sortProperty: 'raiting' },
   { name: 'цене', sortProperty: 'price' },
   { name: 'алфавиту', sortProperty: 'name' },
 ];
@@ -12,18 +17,20 @@ export const list = [
 function Sort() {
   const [isVisible, setIsVisible] = React.useState(false);
 
-  const sortRef = React.useRef();
+  const sortRef = React.useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
   const { sort } = useSelector(selectFilter);
 
-  const onChangeType = (obj) => {
+  const onChangeType = (obj: SortListItem) => {
     dispatch(setSort(obj));
+    setIsVisible(false);
   };
 
   React.useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (sortRef.current && event.target && !sortRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      const _event = event as MouseEvent & { path: Node[] };
+      if (sortRef.current && !_event.path.includes(sortRef.current)) {
         setIsVisible(false);
       }
     };
@@ -58,7 +65,7 @@ function Sort() {
               <li
                 onClick={() => onChangeType(obj)}
                 key={index}
-                className={sort === index ? 'active' : ''}>
+                className={sort.sortProperty === obj.sortProperty ? 'active' : ''}>
                 по {obj.name}
               </li>
             ))}
